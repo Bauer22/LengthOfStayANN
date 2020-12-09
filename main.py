@@ -123,30 +123,41 @@ def plot_confusion_matrix(cm, classes, title,normalize=True, cmap=plt.cm.Blues):
     plt.xlabel('Predicted label')
     plt.tight_layout()
 
+
+# This code is not set up to work right now. For it to work, just need to set up a return statement in the patrick function
 def brute_force_parameters(train_X, test_X, train_Y, test_Y,):
-    myArray = []
+    #List to store all of the tests
+    memory = []
+
+    # All of the parameters that we want to try
     listOLists = [[256,128, 64, 32, 16], [256,128, 64, 32, 16], [256,128, 64, 32, 16], ['identity', 'logistic', 'tanh', 'relu'],
                   [0.1,0.01,0.001]]
     count = 0
+    # Creates a combination of all of the parameters in the list of lists
     for list in itertools.product(*listOLists):
+        #Run the model for a combination of parameters
         temp = patrick(train_X, test_X, train_Y, test_Y, list[0], list[1], list[2], list[3], list[4])
         print(count, temp)
-        myArray.append(temp)
+        #Save the model as well as the accuracy of the model
+        memory.append(temp)
         count = count + 1
-
-    new = sorted(myArray, key=lambda x: x[-1])
+    # Sort all of the models by their accuracy and print
+    new = sorted(memory, key=lambda x: x[-1])
     for i in new:
         print(i)
 
 
 def patrick(train_X, test_X, train_Y, test_Y, f,s,t,a,lr):
 
+ # Define the model and its parameters
     model_sklearn = MLPClassifier(max_iter=100000, hidden_layer_sizes=(f, s, t), activation=a,
                                   learning_rate_init=lr, )
+    #Train the model
     model_sklearn.fit(train_X, train_Y)
+    #Get predictions from the model
     pred_y_test_sklearn = model_sklearn.predict(test_X)
 
-
+    # Outputs for the results of the model
     results = r2_score(test_Y, pred_y_test_sklearn)
     print('R2 score: ', results)
     mse = mean_squared_error(test_Y, pred_y_test_sklearn)
@@ -156,12 +167,17 @@ def patrick(train_X, test_X, train_Y, test_Y, f,s,t,a,lr):
     cm1 = classification_report(test_Y, pred_y_test_sklearn)
     print(cm1)
 
+    #For brute force method
+    #score = accuracy_score(test_Y,pred_y_test_sklearn)
 
+    # More outputs for the model
     # cm = confusion_matrix(test_Y, pred_y_test_sklearn)
     # plt.figure()
     # plot_confusion_matrix(cm, classes=['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16', '17'], title="Patrick's Code")
     # plt.show()
 
+    #For brute force method
+    #return [f,s,t,a,lr, score]
 
 def tina(train_X, test_X, train_Y, test_Y):
 
